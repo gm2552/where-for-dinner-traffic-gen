@@ -1,0 +1,18 @@
+---
+apiversion: build.tanzu.vmware.com/v1
+kind: ContainerAppBuildPlan
+metadata:
+  name: custom
+spec:
+  registry: ""
+  buildpacks:
+    builder: "paketobuildpacks/builder-jammy-base"
+  postbuildsteps:
+  - namedtask: tanzu-spring-boot
+  runtimes:
+  - name: kubernetes-carvel-package
+    description: create a carvel package for deploying on kubernetes
+    steps:
+    - namedtask: tanzu-kubernetes-deployment
+    - namedtask: tanzu-kubernetes-carvel-package
+
