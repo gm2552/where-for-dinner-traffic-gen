@@ -1,0 +1,41 @@
+---
+spring.application.name: where-for-dinner-traffic-gen
+
+#Default profile forwards to local instances.  Use for inner loop dev
+where-for-dinner:
+  ui:
+    service:
+      #identifier: http://where-for-dinner.<domain>/
+      identifier: http://localhost:3000/   # default used by npm start
+  search:
+    service:
+      #identifier: http://where-for-dinner.<domain>/api/search
+      identifier: http://localhost:8081/
+  availability:
+    service:
+      #identifier: http://where-for-dinner.<domain>/api/availability
+      identifier: http://localhost:8082/
+
+ 
+  load-task:
+    interval: PT1S
+    initial-delay: PT5S
+
+---
+# when running on K8s, bypass spring cloud gateway and go directly to the services
+spring:
+  config:
+    activate:
+      on-cloud-platform: kubernetes
+
+where-for-dinner:
+  namespace: ${spring.cloud.kubernetes.client.namespace}
+  ui:
+    service:
+      identifier: http://where-for-dinner-ui.${where-for-dinner.namespace}/
+  search:
+    servcie:
+      identifier: http://where-for-dinner-search.${where-for-dinner.namespace}/
+  availability:
+    service:
+      identifier: http://where-for-dinner-availability.${where-for-dinner.namespace}/
